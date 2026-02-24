@@ -9,7 +9,7 @@ body {
 
 .casino-container {
   text-align: center;
-  max-width: 650px;
+  max-width: 700px;
   width: 100%;
 }
 
@@ -29,7 +29,8 @@ h1 {
 
 .info-bar button {
   margin-left: 5px;
-  padding: 2px 6px;
+  padding: 5px 8px;
+  font-size: 1rem;
 }
 
 .slot-container {
@@ -39,6 +40,7 @@ h1 {
   padding: 20px;
   margin-bottom: 20px;
   overflow: hidden;
+  position: relative;
 }
 
 .reels {
@@ -51,23 +53,23 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 150px;
+  height: 240px; /* 3 symbols x 80px */
   overflow: hidden;
-  width: 50px;
+  width: 60px;
   background: #000;
   border-radius: 8px;
 }
 
 .symbol {
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   text-align: center;
-  height: 50px;
-  line-height: 50px;
-  transition: transform 0.2s;
+  height: 80px;
+  line-height: 80px;
+  transition: transform 0.2s, filter 0.3s;
 }
 
 button {
-  padding: 10px 20px;
+  padding: 12px 20px;
   margin-top: 10px;
   font-size: 1rem;
   cursor: pointer;
@@ -87,4 +89,12 @@ button:hover {
   margin-top: 15px;
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.paylines-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
