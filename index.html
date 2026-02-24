@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mega EMOJI Slot 5x4 FIX</title>
+    <title>Mega EMOJI Slot 5x4 - Final Pro</title>
     <style>
         :root {
             --bg: #050505;
@@ -12,30 +12,122 @@
             --sym-h: 80px; 
             --reel-w: 100px; 
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial Black', sans-serif; }
-        body { background: radial-gradient(circle, #1a1a2e 0%, #050505 100%); height: 100vh; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; }
+        body { 
+            background: radial-gradient(circle, #1a1a2e 0%, #050505 100%); 
+            height: 100vh; display: flex; align-items: center; justify-content: center; 
+            color: white; overflow: hidden; 
+        }
+
         #game-wrap { text-align: center; width: 100%; max-width: 600px; }
-        .machine-frame { background: #222; border: 8px solid #333; border-radius: 20px; padding: 10px; display: inline-flex; gap: 5px; box-shadow: 0 0 50px #000; }
-        .reel-window { width: var(--reel-w); height: calc(var(--sym-h) * 4); background: white; overflow: hidden; position: relative; border-radius: 5px; }
-        .reel-strip { position: absolute; top: 0; width: 100%; display: flex; flex-direction: column; }
-        .symbol { height: var(--sym-h); display: flex; align-items: center; justify-content: center; font-size: 45px; color: #000; background: #fff; border-bottom: 1px solid #eee; }
-        .win-blink { animation: blink 0.3s infinite alternate; background: #fff6d5 !important; box-shadow: inset 0 0 15px gold; z-index: 10; }
-        @keyframes blink { from { transform: scale(1); } to { transform: scale(1.05); } }
-        .dashboard { margin-top: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; }
+
+        /* SLOT MAŠINA */
+        .machine-frame {
+            background: #222;
+            border: 8px solid #333;
+            border-radius: 20px;
+            padding: 10px;
+            display: inline-flex;
+            gap: 5px;
+            box-shadow: 0 0 50px #000, 0 0 20px rgba(255, 207, 64, 0.2);
+            position: relative;
+        }
+
+        .reel-window {
+            width: var(--reel-w);
+            height: calc(var(--sym-h) * 4);
+            background: white;
+            overflow: hidden;
+            position: relative;
+            border-radius: 5px;
+        }
+
+        .reel-strip {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .symbol {
+            height: var(--sym-h);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            color: #000;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* WIN EFEKAT */
+        .win-blink {
+            animation: blink 0.3s infinite alternate;
+            background: #fff6d5 !important;
+            box-shadow: inset 0 0 20px gold;
+            z-index: 10;
+        }
+        @keyframes blink { from { transform: scale(1); } to { transform: scale(1.08); } }
+
+        /* UI CONTROLS */
+        .dashboard {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
         .stat-val { font-size: 1.2rem; color: var(--gold); display: block; }
         .label { font-size: 10px; color: #888; text-transform: uppercase; }
-        .spin-btn { grid-column: span 4; padding: 15px; font-size: 1.8rem; background: linear-gradient(#ffcf40, #ffab00); border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 5px 0 #946b00; color: #000; }
+
+        .spin-btn {
+            grid-column: span 4;
+            padding: 15px;
+            font-size: 1.8rem;
+            background: linear-gradient(#ffcf40, #ffab00);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #946b00;
+            color: #000;
+            transition: 0.1s;
+        }
+        .spin-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #946b00; }
         .spin-btn:disabled { opacity: 0.5; filter: grayscale(1); }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
+
+        .bet-btn { background: #444; color: white; border: none; width: 25px; border-radius: 5px; cursor: pointer; }
+
+        /* OVERLAYS */
+        .overlay {
+            display: none;
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+        }
+
         .shake { animation: shakeAnim 0.3s 3; }
         @keyframes shakeAnim { 0% { transform: translate(0,0); } 25% { transform: translate(5px,5px); } 75% { transform: translate(-5px,-5px); } }
-        @media (max-width: 600px) { :root { --reel-w: 60px; --sym-h: 60px; } .symbol { font-size: 28px; } }
+
+        @media (max-width: 600px) { 
+            :root { --reel-w: 60px; --sym-h: 60px; } 
+            .symbol { font-size: 28px; }
+        }
     </style>
 </head>
 <body>
 
     <div id="game-wrap">
-        <h1 style="color:var(--gold); margin-bottom:10px;">MEGA EMOJI</h1>
+        <h1 style="color:var(--gold); margin-bottom:10px; text-shadow: 0 0 10px gold;">MEGA EMOJI 5x4</h1>
+        
         <div class="machine-frame" id="machine">
             <div class="reel-window"><div class="reel-strip" id="reel-0"></div></div>
             <div class="reel-window"><div class="reel-strip" id="reel-1"></div></div>
@@ -43,33 +135,40 @@
             <div class="reel-window"><div class="reel-strip" id="reel-3"></div></div>
             <div class="reel-window"><div class="reel-strip" id="reel-4"></div></div>
         </div>
+
         <div class="dashboard">
             <div class="stat"><span class="label">Credits</span><span class="stat-val" id="credits">122</span></div>
             <div class="stat">
                 <span class="label">Bet</span>
                 <div style="display:flex; gap:5px; justify-content:center;">
-                    <button onclick="changeBet(-5)">-</button><span class="stat-val" id="bet-val">10</span><button onclick="changeBet(5)">+</button>
+                    <button class="bet-btn" onclick="changeBet(-5)">-</button>
+                    <span class="stat-val" id="bet-val">10</span>
+                    <button class="bet-btn" onclick="changeBet(5)">+</button>
                 </div>
             </div>
             <div class="stat"><span class="label">Win</span><span class="stat-val" id="win-display">0</span></div>
-            <div class="stat"><span class="label">Free Spins</span><span class="stat-val" id="fs-display" style="color:var(--fs-blue)">0</span></div>
+            <div class="stat"><span class="label">FreeSpins</span><span class="stat-val" id="fs-display" style="color:var(--fs-blue)">0</span></div>
             <button class="spin-btn" id="spin-btn" onclick="spin()">SPIN</button>
         </div>
     </div>
 
     <div id="overlay" class="overlay">
-        <h1 id="ov-title" style="font-size:3rem; color:var(--gold)">BIG WIN!</h1>
-        <h2 id="ov-sub" style="font-size:1.5rem; margin:20px;"></h2>
-        <button class="spin-btn" style="padding:10px 40px;" onclick="closeOv()">CONTINUE</button>
+        <h1 id="ov-title" style="font-size:3.5rem; color:var(--gold)">BIG WIN!</h1>
+        <h2 id="ov-sub" style="font-size:2rem; margin:20px;"></h2>
+        <button class="spin-btn" style="padding:10px 40px; grid-column: auto;" onclick="closeOv()">CONTINUE</button>
     </div>
 
 <script>
-    const EMOJIS = ['🍒', '🍋', '🍇', '🍉', '🔔', '7️⃣', '💎']; // Zvezda izbačena iz opšteg niza radi kontrole
+    const EMOJIS = ['🍒', '🍋', '🍇', '🍉', '🔔', '7️⃣']; 
+    const WILD = '💎';
+    const SCATTER = '⭐';
+
     let credits = 122;
     let bet = 10;
     let fs = 0;
     let isSpinning = false;
 
+    // AUDIO ENGINE
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(f, t, d, v=0.1) {
         try {
@@ -84,20 +183,29 @@
     }
 
     function init() {
-        for(let i=0; i<5; i++) generateStrip(i, true);
+        for(let i=0; i<5; i++) generateStrip(i);
     }
 
-    // Funkcija koja pametnije generiše simbole
-    function generateStrip(id, isInitial = false) {
+    // HOT LOGIC GENERATOR
+    function generateStrip(id) {
         const strip = document.getElementById(`reel-${id}`);
         strip.innerHTML = '';
+        
+        // Povećavamo šansu za grupisanje istih simbola (Win Rate boost)
+        const luckyRoll = Math.random() < 0.30; 
+        const luckySymbol = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+
         for(let i=0; i<44; i++) {
             const div = document.createElement('div');
             div.className = 'symbol';
             
-            // Šansa za zvezdu je sada samo 5% po polju
-            if(Math.random() < 0.05) {
-                div.innerText = '⭐';
+            let rand = Math.random();
+            if (i < 4 && luckyRoll && Math.random() < 0.4) {
+                div.innerText = luckySymbol;
+            } else if (rand < 0.07) {
+                div.innerText = WILD; 
+            } else if (rand < 0.12) {
+                div.innerText = SCATTER; 
             } else {
                 div.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
             }
@@ -116,6 +224,7 @@
         
         isSpinning = true;
         document.getElementById('spin-btn').disabled = true;
+        document.getElementById('win-display').innerText = "0";
         document.querySelectorAll('.symbol').forEach(s => s.classList.remove('win-blink'));
 
         if(fs > 0) fs--; else credits -= bet;
@@ -127,22 +236,19 @@
 
         for(let i=0; i<5; i++) {
             const strip = document.getElementById(`reel-${i}`);
-            
-            // Prvo generišemo potpuno novu traku za svaki reel
             generateStrip(i);
 
             strip.style.transition = 'none';
             strip.style.transform = `translateY(-${travel}px)`;
-            
-            strip.offsetHeight; // force reflow
+            strip.offsetHeight; 
 
-            strip.style.transition = `transform ${2 + i * 0.4}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
+            strip.style.transition = `transform ${1.8 + i * 0.3}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
             strip.style.transform = 'translateY(0)';
             
-            setTimeout(() => playSound(200 + i*50, 'sine', 0.1, 0.02), i * 300);
+            setTimeout(() => playSound(200 + i*50, 'sine', 0.1, 0.02), i * 200);
         }
 
-        setTimeout(evaluate, 4000);
+        setTimeout(evaluate, 3200);
     }
 
     function evaluate() {
@@ -157,31 +263,43 @@
         let winTotal = 0;
         let starCount = 0;
 
-        // Linije (horizontalno)
+        // Provera horizontalnih linija
         for(let r=0; r<4; r++) {
-            let symbol = matrix[0][r].innerText;
-            if(symbol === '⭐') continue; // Zvezde ne prave obične linije
+            let firstSym = matrix[0][r].innerText;
+            let matchTarget = firstSym;
+
+            // Handle Wild na prvoj poziciji
+            if (matchTarget === WILD) {
+                for(let c=1; c<5; c++) {
+                    if(matrix[c][r].innerText !== WILD && matrix[c][r].innerText !== SCATTER) {
+                        matchTarget = matrix[c][r].innerText;
+                        break;
+                    }
+                }
+            }
+
+            if(matchTarget === SCATTER) continue;
 
             let count = 1;
             let winEls = [matrix[0][r]];
 
             for(let c=1; c<5; c++) {
-                if(matrix[c][r].innerText === symbol) {
+                let current = matrix[c][r].innerText;
+                if(current === matchTarget || current === WILD) {
                     count++;
                     winEls.push(matrix[c][r]);
                 } else break;
             }
 
             if(count >= 3) {
-                winTotal += bet * count;
+                let mult = count === 3 ? 2 : (count === 4 ? 5 : 15);
+                winTotal += bet * mult;
                 winEls.forEach(el => el.classList.add('win-blink'));
             }
         }
 
-        // Brojanje zvezda ZAISTA na ekranu
-        matrix.forEach(col => col.forEach(s => { 
-            if(s.innerText === '⭐') starCount++; 
-        }));
+        // Brojanje zvezda
+        matrix.forEach(col => col.forEach(s => { if(s.innerText === SCATTER) starCount++; }));
 
         if(starCount >= 4) {
             fs += 10;
@@ -189,7 +307,10 @@
         } else if(winTotal > 0) {
             credits += winTotal;
             document.getElementById('win-display').innerText = winTotal;
-            if(winTotal >= bet * 5) showPopup("BIG WIN!", "+$" + winTotal);
+            if(winTotal >= bet * 8) {
+                showPopup("BIG WIN!", "+$" + winTotal);
+                spawnCoins();
+            }
         }
 
         isSpinning = false;
@@ -197,12 +318,34 @@
         updateUI();
     }
 
+    function spawnCoins() {
+        for(let i=0; i<30; i++) {
+            setTimeout(() => {
+                const c = document.createElement('div');
+                c.innerText = '💰';
+                c.style.position = 'fixed';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.top = '-50px';
+                c.style.fontSize = '2rem';
+                c.style.zIndex = '200';
+                c.style.pointerEvents = 'none';
+                c.style.transition = 'transform 2s linear, opacity 2s';
+                document.body.appendChild(c);
+                requestAnimationFrame(() => {
+                    c.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 720}deg)`;
+                    c.style.opacity = '0';
+                });
+                setTimeout(() => c.remove(), 2000);
+            }, i * 80);
+        }
+    }
+
     function showPopup(t, s) {
         document.getElementById('ov-title').innerText = t;
         document.getElementById('ov-sub').innerText = s;
         document.getElementById('overlay').style.display = 'flex';
         document.getElementById('machine').classList.add('shake');
-        playSound(80, 'sawtooth', 0.8, 0.2);
+        playSound(100, 'sawtooth', 1, 0.2);
         setTimeout(() => document.getElementById('machine').classList.remove('shake'), 500);
     }
 
