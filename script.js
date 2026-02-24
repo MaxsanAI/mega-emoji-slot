@@ -1,95 +1,78 @@
-let credits = parseInt(localStorage.getItem("credits")) || 1000;
-let bet = 1;
-const creditCount = document.getElementById("credit-count");
-const betValue = document.getElementById("bet-value");
-updateCredits();
-
-const reels = document.querySelectorAll(".reel");
-const paylinesOverlay = document.getElementById("paylines");
-const emojiSymbols = ["🍒","🍋","🍊","🍉","🍇","🍓","🍌","⭐","🔔","💎","💰","🎲","🎰","🍀","😎","😂","🔥","🎵","⚡","💖"];
-
-const paylines = [
-  [0,0,0,0,0],[1,1,1,1,1],[2,2,2,2,2],
-  [0,1,2,1,0],[2,1,0,1,2],[0,0,1,0,0],
-  [2,2,1,2,2],[0,1,0,1,0],[2,1,2,1,2],
-  [1,0,1,2,1],[1,2,1,0,1],[0,1,1,1,0],
-  [2,1,1,1,2],[0,1,2,2,2],[2,1,0,0,0],
-  [0,0,1,2,2],[2,2,1,0,0],[1,1,0,1,1],
-  [1,1,2,1,1],[0,1,2,1,2]
+const reels = [
+  document.getElementById('reel1'),
+  document.getElementById('reel2'),
+  document.getElementById('reel3'),
+  document.getElementById('reel4'),
+  document.getElementById('reel5')
 ];
 
-function updateCredits() {
-  creditCount.textContent = credits;
-  betValue.textContent = bet;
-  localStorage.setItem("credits", credits);
+const spinBtn = document.querySelector('.spin-btn');
+const creditDisplay = document.getElementById('credit-count');
+const betDisplay = document.getElementById('bet-value');
+const linesDisplay = document.getElementById('lines-value');
+let credits = 1000;
+let betPerLine = 1;
+let lines = 1;
+
+const symbols = ['🍒','🍋','🍊','🍉','⭐','💎','7️⃣'];
+
+function randomSymbol() {
+  return symbols[Math.floor(Math.random() * symbols.length)];
 }
 
-// Bet buttons
-document.getElementById("bet-minus").addEventListener("click",()=>{if(bet>1) bet--; updateCredits();});
-document.getElementById("bet-plus").addEventListener("click",()=>{if(bet<20 && bet<=credits) bet++; updateCredits();});
+function spinReels() {
+  if (credits < betPerLine * lines) {
+    alert("Not enough credits!");
+    return;
+  }
+  credits -= betPerLine * lines;
+  creditDisplay.textContent = credits;
 
-// Create spin animation
-function spinMega() {
-  if(credits<bet){ alert("Not enough credits! Watch an ad!"); return; }
-  credits-=bet; updateCredits();
+  // ukloni prethodne klase win
+  reels.forEach(r => r.classList.remove('win'));
 
-  const reelResult=[];
-  reels.forEach(reel=>{
-    reel.innerHTML="";
-    const symbols=[];
-    for(let i=0;i<3;i++){
-      const sym = emojiSymbols[Math.floor(Math.random()*emojiSymbols.length)];
-      symbols.push(sym);
-      const div=document.createElement("div");
-      div.className="symbol"; div.textContent=sym;
-      reel.appendChild(div);
-    }
-    reelResult.push(symbols);
+  // Spin animacija
+  reels.forEach((reel, index) => {
+    reel.classList.add('spin');
+    setTimeout(() => {
+      reel.textContent = randomSymbol();
+      reel.classList.remove('spin');
+    }, 100 + index * 150);
   });
 
-  // Animate reels
-  reels.forEach((reel,i)=>{
-    const children=Array.from(reel.children);
-    children.forEach((c,j)=>{
-      c.style.transform="translateY(-90px)";
-      setTimeout(()=>c.style.transform="translateY(0)", i*200+j*80);
-    });
-  });
-
-  setTimeout(()=>checkWin(reelResult), 1200);
-}
-
-// Check paylines
-function checkWin(grid){
-  let win=false, totalWin=0;
-  paylines.forEach(line=>{
-    let first=grid[0][line[0]]; let matchCount=1;
-    for(let i=1;i<5;i++){
-      if(grid[i][line[i]]===first) matchCount++;
-      else break;
+  // Provera dobitka nakon animacije
+  setTimeout(() => {
+    const firstSymbol = reels[0].textContent;
+    let win = 0;
+    let isWin = true;
+    for (let i = 0; i < lines; i++) {
+      if (reels[i].textContent !== firstSymbol) isWin = false;
     }
-    if(matchCount>=3){
-      win=true; totalWin += bet*matchCount*5;
-      // Highlight winning symbols
-      for(let i=0;i<matchCount;i++){
-        const symDiv = reels[i].children[line[i]];
-        symDiv.style.transform="scale(1.4)";
-        symDiv.style.filter="drop-shadow(0 0 10px gold)";
-        setTimeout(()=>{ symDiv.style.transform="scale(1)"; symDiv.style.filter=""; },500);
+    if (isWin) {
+      win = betPerLine * lines * 2;
+      for (let i = 0; i < lines; i++) {
+        reels[i].classList.add('win');
       }
     }
-  });
-
-  const resultDiv=document.querySelector(".result");
-  if(win){ credits+=totalWin; resultDiv.textContent=`🎉 BIG WIN +${totalWin} credits!`; resultDiv.style.color="#ffd700"; }
-  else{ resultDiv.textContent="💔 Try Again!"; resultDiv.style.color="#fff"; }
-  updateCredits();
+    credits += win;
+    creditDisplay.textContent = credits;
+    document.querySelector('.result').textContent = win ? `You won ${win}! 🎉` : '';
+  }, 1000);
 }
 
-document.querySelector(".spin-btn").addEventListener("click", spinMega);
+// Bet adjust
+document.getElementById('bet-minus').addEventListener('click', () => { if(betPerLine>1) betPerLine--; betDisplay.textContent = betPerLine; });
+document.getElementById('bet-plus').addEventListener('click', () => { betPerLine++; betDisplay.textContent = betPerLine; });
 
-// Ad simulation resets credits
-document.getElementById("watch-ad").addEventListener("click",()=>{
-  alert("Ad watched! Credits reset to 1000 🎁");
-  credits=1000; updateCredits();
+// Lines adjust
+document.getElementById('lines-minus').addEventListener('click', () => { if(lines>1) lines--; linesDisplay.textContent = lines; });
+document.getElementById('lines-plus').addEventListener('click', () => { if(lines<20) lines++; linesDisplay.textContent = lines; });
+
+// Watch ad button adds credits
+document.getElementById('watch-ad').addEventListener('click', () => {
+  credits += 100;
+  creditDisplay.textContent = credits;
+  alert("Credits added! 🎁");
 });
+
+spinBtn.addEventListener('click', spinReels);
