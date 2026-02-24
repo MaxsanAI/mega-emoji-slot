@@ -3,69 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mega EMOJI Slot Pro</title>
+    <title>Mega EMOJI Slot</title>
     <style>
         :root {
-            --bg: #050505;
+            --bg: #0a0a0a;
             --gold: #ffcf40;
-            --fs-color: #00d4ff;
-            --symbol-h: 80px;
+            --fs-blue: #00d4ff;
+            --reel-w: 100px;
+            --sym-h: 80px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial Black', sans-serif; }
-        body { background: var(--bg); color: white; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
-        #game-container { width: 95%; max-width: 800px; text-align: center; }
+        body {
+            background: var(--bg);
+            background: radial-gradient(circle, #1a1a2e 0%, #050505 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
 
-        .slot-body {
+        /* SLOT CONTAINER */
+        .machine-wrap {
+            position: relative;
+            padding: 15px;
             background: #222;
             border: 10px solid #333;
-            border-radius: 20px;
+            border-radius: 25px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .slot-body {
             display: flex;
             gap: 5px;
-            padding: 10px;
-            justify-content: center;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
+            background: #000;
+            padding: 5px;
+            border-radius: 10px;
         }
 
         .reel-window {
-            width: 100px;
-            height: 320px; /* 4 simbola vidljiva */
+            width: var(--reel-w);
+            height: calc(var(--sym-h) * 4); /* 5x4 grid */
             background: white;
-            border-radius: 5px;
             overflow: hidden;
             position: relative;
+            border-radius: 5px;
         }
 
         .reel-strip {
             position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
             display: flex;
             flex-direction: column;
         }
 
         .symbol {
-            height: 80px;
-            font-size: 45px;
+            height: var(--sym-h);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 45px;
             color: #000;
-            transition: all 0.3s;
+            background: #fff;
+            border-bottom: 1px solid #eee;
         }
 
-        /* Treperenje za pobedu */
-        .win-blink {
-            animation: blink 0.5s infinite alternate;
-            background: rgba(255, 207, 64, 0.4) !important;
-            border-radius: 10px;
-            transform: scale(1.1);
+        /* WIN ANIMATION */
+        .win-active {
+            animation: winBlink 0.4s infinite alternate;
+            background: #fff6d5 !important;
+            z-index: 10;
         }
 
-        @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
+        @keyframes winBlink {
+            from { transform: scale(1); box-shadow: inset 0 0 0px gold; }
+            to { transform: scale(1.05); box-shadow: inset 0 0 20px gold; }
+        }
 
-        .dashboard {
+        /* CONTROLS */
+        .ui {
+            width: 100%;
+            max-width: 600px;
             margin-top: 20px;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -75,22 +99,27 @@
             border-radius: 15px;
         }
 
+        .stat { text-align: center; }
+        .label { font-size: 10px; color: #888; text-transform: uppercase; display: block; }
         .val { font-size: 20px; color: var(--gold); }
-        .label { font-size: 10px; color: #888; text-transform: uppercase; }
 
         .spin-btn {
             grid-column: span 4;
             padding: 15px;
             font-size: 1.8rem;
-            background: linear-gradient(#ffcf40, #ffab00);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
+            background: linear-gradient(#ffcf40, #ffab00);
             cursor: pointer;
-            box-shadow: 0 5px 0 #996600;
+            box-shadow: 0 6px 0 #946b00;
+            color: #000;
         }
-        .spin-btn:disabled { opacity: 0.5; filter: grayscale(1); }
 
-        .overlay {
+        .spin-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #946b00; }
+        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+
+        /* OVERLAYS */
+        .popup {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -99,86 +128,91 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
         }
 
-        .shake { animation: shake 0.3s; }
-        @keyframes shake { 0%,100% {transform:translate(0,0)} 25%{transform:translate(5px,5px)} 75%{transform:translate(-5px,-5px)} }
+        .boom-text { font-size: 4rem; color: var(--gold); text-shadow: 0 0 20px gold; }
 
-        @media (max-width: 600px) { .reel-window { width: 65px; height: 240px; } .symbol { height: 60px; font-size: 28px; } }
+        @media (max-width: 600px) {
+            :root { --reel-w: 65px; --sym-h: 60px; }
+            .boom-text { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <h1 style="color:var(--gold); margin-bottom:15px;">MEGA EMOJI SLOT</h1>
-    <div class="slot-body" id="slot-machine">
-        <div class="reel-window"><div class="reel-strip" id="reel-0"></div></div>
-        <div class="reel-window"><div class="reel-strip" id="reel-1"></div></div>
-        <div class="reel-window"><div class="reel-strip" id="reel-2"></div></div>
-        <div class="reel-window"><div class="reel-strip" id="reel-3"></div></div>
-        <div class="reel-window"><div class="reel-strip" id="reel-4"></div></div>
+    <div class="machine-wrap" id="machine">
+        <div class="slot-body">
+            <div class="reel-window"><div class="reel-strip" id="reel-0"></div></div>
+            <div class="reel-window"><div class="reel-strip" id="reel-1"></div></div>
+            <div class="reel-window"><div class="reel-strip" id="reel-2"></div></div>
+            <div class="reel-window"><div class="reel-strip" id="reel-3"></div></div>
+            <div class="reel-window"><div class="reel-strip" id="reel-4"></div></div>
+        </div>
     </div>
 
-    <div class="dashboard">
-        <div class="stat-box"><span class="label">Credits</span><span class="val" id="balance">122</span></div>
-        <div class="stat-box">
+    <div class="ui">
+        <div class="stat"><span class="label">Credits</span><span class="val" id="credits">122</span></div>
+        <div class="stat">
             <span class="label">Bet</span>
-            <div style="display:flex; align-items:center; justify-content:center; gap:5px;">
-                <button onclick="changeBet(-5)" style="padding:0 5px;">-</button>
-                <span class="val" id="bet-val">10</span>
-                <button onclick="changeBet(5)" style="padding:0 5px;">+</button>
+            <div style="display:flex; justify-content:center; align-items:center; gap:5px;">
+                <button onclick="changeBet(-5)" style="width:20px">-</button>
+                <span class="val" id="bet-display">10</span>
+                <button onclick="changeBet(5)" style="width:20px">+</button>
             </div>
         </div>
-        <div class="stat-box"><span class="label">Last Win</span><span class="val" id="win-display">0</span></div>
-        <div class="stat-box"><span class="label">Free Spins</span><span class="val" id="fs-display" style="color:var(--fs-color)">0</span></div>
+        <div class="stat"><span class="label">Win</span><span class="val" id="win-display">0</span></div>
+        <div class="stat"><span class="label">FreeSpins</span><span class="val" id="fs-display" style="color:var(--fs-blue)">0</span></div>
         <button class="spin-btn" id="spin-btn" onclick="spin()">SPIN</button>
     </div>
-</div>
 
-<div id="overlay" class="overlay">
-    <h1 id="ov-title" style="font-size:4rem; color:var(--gold)">BIG WIN!</h1>
-    <h2 id="ov-sub" style="font-size:2rem; margin:20px 0;"></h2>
-    <button class="spin-btn" style="padding:10px 40px;" onclick="closeOverlay()">CONTINUE</button>
-</div>
+    <div id="popup" class="popup">
+        <h1 class="boom-text" id="pop-title">BIG WIN!</h1>
+        <h2 id="pop-sub" style="font-size:2rem; margin:20px 0;"></h2>
+        <button class="spin-btn" style="padding:10px 40px;" onclick="closePop()">CONTINUE</button>
+    </div>
 
 <script>
-    const EMOJI = ['🍒', '🍋', '🍇', '🍉', '🔔', '7️⃣', '💎', '⭐'];
+    const EMOJIS = ['🍒', '🍋', '🍇', '🍉', '🔔', '7️⃣', '💎', '⭐'];
     let credits = 122;
     let bet = 10;
     let freeSpins = 0;
     let isSpinning = false;
-
-    // Audio context za BOOM
+    
+    // Audio Context
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBoom() {
+    function playSfx(freq, type, dur) {
         const o = audioCtx.createOscillator();
         const g = audioCtx.createGain();
-        o.type = 'sawtooth'; o.frequency.setValueAtTime(60, audioCtx.currentTime);
-        g.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+        o.type = type; o.frequency.value = freq;
+        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
         o.connect(g); g.connect(audioCtx.destination);
-        o.start(); o.stop(audioCtx.currentTime + 1);
+        o.start(); o.stop(audioCtx.currentTime + dur);
     }
 
+    // Inicijalizacija - popunjavamo trake unapred
     function init() {
         for(let i=0; i<5; i++) {
             const strip = document.getElementById(`reel-${i}`);
-            for(let j=0; j<10; j++) addSymbol(strip);
+            // Dodajemo 30 početnih simbola
+            for(let j=0; j<30; j++) {
+                createSymbol(strip);
+            }
         }
     }
 
-    function addSymbol(strip) {
-        const d = document.createElement('div');
-        d.className = 'symbol';
-        d.innerText = EMOJI[Math.floor(Math.random() * EMOJI.length)];
-        strip.prepend(d); // Dodaje na vrh
+    function createSymbol(strip) {
+        const div = document.createElement('div');
+        div.className = 'symbol';
+        div.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+        strip.appendChild(div);
+        return div;
     }
 
-    function changeBet(v) {
+    function changeBet(val) {
         if(isSpinning) return;
-        bet = Math.max(5, Math.min(20, bet + v));
-        document.getElementById('bet-val').innerText = bet;
+        bet = Math.max(5, Math.min(20, bet + val));
+        document.getElementById('bet-display').innerText = bet;
     }
 
     async function spin() {
@@ -186,72 +220,91 @@
         
         isSpinning = true;
         document.getElementById('spin-btn').disabled = true;
-        document.getElementById('win-display').innerText = "0";
+        document.querySelectorAll('.symbol').forEach(s => s.classList.remove('win-active'));
+
         if(freeSpins > 0) freeSpins--; else credits -= bet;
         updateUI();
 
-        // Ukloni stare win efekte
-        document.querySelectorAll('.symbol').forEach(s => s.classList.remove('win-blink'));
-
-        const reelResults = [];
+        const spinResults = [];
 
         for(let i=0; i<5; i++) {
             const strip = document.getElementById(`reel-${i}`);
-            const spinCount = 20 + (i * 5); // Svaki sledeći vrti duže
+            const symH = window.innerWidth > 600 ? 80 : 60;
             
-            // Generisanje novih simbola koji će pasti
-            for(let j=0; j<spinCount; j++) addSymbol(strip);
+            // Koliko simbola preskačemo (brzina rotacije)
+            const jump = 20 + (i * 5);
+            const targetY = jump * symH;
 
-            const travel = spinCount * (window.innerWidth > 600 ? 80 : 60);
-            strip.style.transition = `top ${2 + i*0.5}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
-            strip.style.top = "0px";
-            strip.style.top = `-${travel}px`; // Pomeramo ga na dole (relativno na nove simbole)
+            // Dodajemo nove simbole na kraj trake za ovaj spin
+            for(let j=0; j<jump; j++) createSymbol(strip);
+
+            // Animacija pokreta odozgo na dole (pomeramo top u minus)
+            strip.style.transition = `transform ${2 + i * 0.4}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
+            strip.style.transform = `translateY(-${targetY}px)`;
+            
+            // Skladištimo rezultat (zadnja 4 simbola koji su ušli u vidno polje)
+            const children = Array.from(strip.children);
+            spinResults.push(children.slice(-4));
         }
 
-        setTimeout(evaluate, 4500);
+        setTimeout(() => finalize(spinResults), 4000);
     }
 
-    function evaluate() {
-        const matrix = [];
-        // Uzimamo prvih 4 simbola sa svakog reel-a (to su oni koji su se zaustavili u prozoru)
+    function finalize(results) {
+        // Resetujemo trake (fizički ih vraćamo na 0 bez animacije i brišemo stare simbole)
+        // Ovo omogućava beskonačno vrtenje nadole
         for(let i=0; i<5; i++) {
             const strip = document.getElementById(`reel-${i}`);
-            const visible = Array.from(strip.children).slice(0, 4);
-            matrix.push(visible);
+            const last4 = results[i].map(el => el.innerText);
+            
+            strip.style.transition = 'none';
+            strip.style.transform = 'translateY(0)';
+            strip.innerHTML = '';
+            
+            // Vraćamo zadnja 4 simbola na vrh + 26 novih za sledeći krug
+            last4.forEach(txt => {
+                const d = document.createElement('div');
+                d.className = 'symbol';
+                d.innerText = txt;
+                strip.appendChild(d);
+            });
+            for(let j=0; j<26; j++) createSymbol(strip);
         }
 
+        // --- PROVERA DOBITKA ---
         let totalWin = 0;
         let starCount = 0;
 
-        // 1. Provera Linija (Horizontalno za 4 reda)
-        for(let row=0; row<4; row++) {
-            const symb = matrix[0][row].innerText;
-            let matchCount = 1;
-            const winningElements = [matrix[0][row]];
+        // Provera horizontalnih linija (4 reda)
+        for(let r=0; r<4; r++) {
+            const matchSym = results[0][r].innerText;
+            let matches = 1;
+            let winEls = [results[0][r]];
 
-            for(let col=1; col<5; col++) {
-                if(matrix[col][row].innerText === symb) {
-                    matchCount++;
-                    winningElements.push(matrix[col][row]);
+            for(let c=1; c<5; c++) {
+                if(results[c][r].innerText === matchSym) {
+                    matches++;
+                    winEls.push(results[c][r]);
                 } else break;
             }
 
-            if(matchCount >= 3) {
-                totalWin += bet * matchCount;
-                winningElements.forEach(el => el.classList.add('win-blink'));
+            if(matches >= 3) {
+                totalWin += bet * matches;
+                winEls.forEach(el => el.classList.add('win-active'));
+                playSfx(500 + (r * 100), 'sine', 0.5);
             }
         }
 
-        // 2. Brojanje zvezdica (za Free Spins)
-        matrix.forEach(col => col.forEach(s => { if(s.innerText === '⭐') starCount++; }));
+        // Provera za Free Spins (Zvezdice bilo gde)
+        results.forEach(col => col.forEach(s => { if(s.innerText === '⭐') starCount++; }));
 
         if(starCount >= 4) {
             freeSpins += 10;
-            triggerBigWin("LUCKY STARS!", "10 FREE SPINS WON");
+            showPop("LUCKY STARS!", "10 FREE SPINS AWARDED");
         } else if(totalWin > 0) {
             credits += totalWin;
             document.getElementById('win-display').innerText = totalWin;
-            if(totalWin >= bet * 5) triggerBigWin("BIG WIN!", "+$" + totalWin);
+            if(totalWin >= bet * 5) showPop("BIG WIN!", "+$" + totalWin);
         }
 
         isSpinning = false;
@@ -259,18 +312,17 @@
         updateUI();
     }
 
-    function triggerBigWin(t, s) {
-        document.getElementById('ov-title').innerText = t;
-        document.getElementById('ov-sub').innerText = s;
-        document.getElementById('overlay').style.display = 'flex';
-        document.getElementById('slot-machine').classList.add('shake');
-        playBoom();
-        setTimeout(() => document.getElementById('slot-machine').classList.remove('shake'), 500);
+    function showPop(t, s) {
+        document.getElementById('pop-title').innerText = t;
+        document.getElementById('pop-sub').innerText = s;
+        document.getElementById('popup').style.display = 'flex';
+        document.getElementById('machine').style.animation = 'shake 0.3s 3';
+        playSfx(100, 'sawtooth', 1);
     }
 
-    function closeOverlay() { document.getElementById('overlay').style.display = 'none'; }
+    function closePop() { document.getElementById('popup').style.display = 'none'; }
     function updateUI() {
-        document.getElementById('balance').innerText = credits;
+        document.getElementById('credits').innerText = credits;
         document.getElementById('fs-display').innerText = freeSpins;
     }
 
