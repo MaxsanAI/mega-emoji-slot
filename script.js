@@ -1,10 +1,9 @@
-const reels = [
-  document.getElementById('reel1'),
-  document.getElementById('reel2'),
-  document.getElementById('reel3'),
-  document.getElementById('reel4'),
-  document.getElementById('reel5')
-];
+const reels = [];
+for (let r = 1; r <= 3; r++) {
+  for (let c = 1; c <= 5; c++) {
+    reels.push(document.getElementById(`r${r}c${c}`));
+  }
+}
 
 const spinBtn = document.querySelector('.spin-btn');
 const creditDisplay = document.getElementById('credit-count');
@@ -21,10 +20,7 @@ function randomSymbol() {
 }
 
 function spinReels() {
-  if (credits < betPerLine * lines) {
-    alert("Not enough credits!");
-    return;
-  }
+  if (credits < betPerLine * lines) { alert("Not enough credits!"); return; }
   credits -= betPerLine * lines;
   creditDisplay.textContent = credits;
 
@@ -37,21 +33,24 @@ function spinReels() {
     setTimeout(() => {
       reel.textContent = randomSymbol();
       reel.classList.remove('spin');
-    }, 100 + index * 150);
+    }, 100 + index * 100);
   });
 
   // Provera dobitka nakon animacije
   setTimeout(() => {
-    const firstSymbol = reels[0].textContent;
+    // samo horizontalne linije za sada
     let win = 0;
-    let isWin = true;
-    for (let i = 0; i < lines; i++) {
-      if (reels[i].textContent !== firstSymbol) isWin = false;
-    }
-    if (isWin) {
-      win = betPerLine * lines * 2;
-      for (let i = 0; i < lines; i++) {
-        reels[i].classList.add('win');
+    for (let r = 0; r < 3; r++) {
+      const firstSymbol = document.getElementById(`r${r+1}c1`).textContent;
+      let isWin = true;
+      for (let c = 1; c <= lines; c++) {
+        if (document.getElementById(`r${r+1}c${c}`).textContent !== firstSymbol) isWin = false;
+      }
+      if (isWin) {
+        win += betPerLine * lines * 2;
+        for (let c = 1; c <= lines; c++) {
+          document.getElementById(`r${r+1}c${c}`).classList.add('win');
+        }
       }
     }
     credits += win;
@@ -66,7 +65,7 @@ document.getElementById('bet-plus').addEventListener('click', () => { betPerLine
 
 // Lines adjust
 document.getElementById('lines-minus').addEventListener('click', () => { if(lines>1) lines--; linesDisplay.textContent = lines; });
-document.getElementById('lines-plus').addEventListener('click', () => { if(lines<20) lines++; linesDisplay.textContent = lines; });
+document.getElementById('lines-plus').addEventListener('click', () => { if(lines<5) lines++; linesDisplay.textContent = lines; }); // max 5
 
 // Watch ad button adds credits
 document.getElementById('watch-ad').addEventListener('click', () => {
