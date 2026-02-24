@@ -1,328 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Diamond Royal Slot</title>
-    <style>
-        :root {
-            --primary-bg: #0f0c29;
-            --gradient-bg: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
-            --gold: #d4af37;
-            --diamond-blue: #00d4ff;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-
-        body {
-            background: var(--gradient-bg);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        #game-container {
-            width: 100%;
-            max-width: 900px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .header-area { margin-bottom: 20px; }
-        h1 { 
-            font-size: 2.2rem; 
-            text-transform: uppercase; 
-            letter-spacing: 4px;
-            color: var(--gold);
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
-        }
-
-        /* SLOT MACHINE STRUCTURE */
-        .slot-frame {
-            background: #111;
-            border: 10px solid #222;
-            border-radius: 20px;
-            padding: 10px;
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px black;
-        }
-
-        .reel-window {
-            width: 100px;
-            height: 300px; /* Prikazuje 3 simbola (svaki po 100px) */
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .reel-strip {
-            position: absolute;
-            top: -2700px; /* Startna pozicija (dugačka traka iznad) */
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .symbol {
-            height: 100px;
-            font-size: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            color: black;
-            border-bottom: 1px solid #ddd;
-        }
-
-        /* UI DASHBOARD */
-        .controls {
-            margin-top: 25px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            background: var(--glass);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .info-box { display: flex; flex-direction: column; }
-        .label { font-size: 0.7rem; color: #aaa; text-transform: uppercase; margin-bottom: 5px; }
-        .val { font-size: 1.4rem; font-weight: bold; color: #fff; }
-        .free-spins-val { color: var(--diamond-blue); }
-
-        .spin-btn {
-            grid-column: span 4;
-            padding: 18px;
-            font-size: 1.6rem;
-            font-weight: 800;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            background: linear-gradient(135deg, #d4af37 0%, #f1c40f 100%);
-            color: #1a1a1a;
-            transition: 0.2s;
-            box-shadow: 0 5px 0 #997d25;
-        }
-
-        .spin-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #997d25; }
-        .spin-btn:disabled { background: #444; color: #777; box-shadow: none; cursor: not-allowed; }
-
-        .free-mode { 
-            animation: pulse-blue 1.5s infinite; 
-            background: linear-gradient(135deg, #00d4ff 0%, #0056b3 100%) !important;
-            color: white !important;
-        }
-
-        @keyframes pulse-blue {
-            0% { box-shadow: 0 0 10px #00d4ff; }
-            50% { box-shadow: 0 0 30px #00d4ff; }
-            100% { box-shadow: 0 0 10px #00d4ff; }
-        }
-
-        /* MODALS */
-        #ad-modal {
-            display: none;
-            position: fixed;
-            top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @media (max-width: 600px) {
-            .reel-window { width: 60px; height: 180px; }
-            .symbol { height: 60px; font-size: 30px; }
-            .val { font-size: 1rem; }
-            h1 { font-size: 1.4rem; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎰 Mega WOW Slot 🎰</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="game-container">
-        <div class="header-area">
-            <h1 id="status-text">Diamond Slot</h1>
-        </div>
+<div class="casino-container">
+  <h1>🎰 Mega WOW Slot 5x3 🎰</h1>
 
-        <div class="slot-frame" id="main-frame">
-            <div class="reel-window"><div class="reel-strip" id="reel-0"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel-1"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel-2"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel-3"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel-4"></div></div>
-        </div>
-
-        <div class="controls">
-            <div class="info-box">
-                <span class="label">Credits</span>
-                <span class="val" id="balance">122</span>
-            </div>
-            <div class="info-box">
-                <span class="label">Bet</span>
-                <span class="val">10</span>
-            </div>
-            <div class="info-box">
-                <span class="label">Lines</span>
-                <span class="val">3</span>
-            </div>
-            <div class="info-box">
-                <span class="label">Free Spins</span>
-                <span class="val free-spins-val" id="fs-count">0</span>
-            </div>
-            
-            <button class="spin-btn" id="spin-btn" onclick="startSpin()">SPIN</button>
-        </div>
-
-        <p onclick="showAd()" style="margin-top: 20px; color: #555; cursor: pointer; font-size: 0.8rem; text-decoration: underline;">
-            Get +100 Credits (Watch Ad)
-        </p>
+  <div class="info-bar">
+    <div>Credits: <span id="credit-count">1000</span></div>
+    <div>
+      Bet: <span id="bet-value">1</span>
+      <button id="bet-minus">-</button>
+      <button id="bet-plus">+</button>
     </div>
-
-    <div id="ad-modal">
-        <h2 style="color: var(--gold); margin-bottom: 10px;">ADVERTISING</h2>
-        <div id="ad-timer" style="font-size: 4rem; color: white;">5</div>
-        <p>Please wait for reward...</p>
+    <div>
+      Lines: <span id="lines-value">1</span>
+      <button id="lines-minus">-</button>
+      <button id="lines-plus">+</button>
     </div>
+  </div>
 
-    <script>
-        const symbols = ['💎', '7️⃣', '🔔', '🍒', '🍋', '🍇', '⭐'];
-        let credits = 122;
-        let freeSpins = 0;
-        let isSpinning = false;
-        const SYMBOL_HEIGHT = window.innerWidth > 600 ? 100 : 60;
+  <div class="slot-container" id="mega-slot">
+    <div class="reels">
+      <div class="reel-row">
+        <div class="reel" id="r1c1">🍒</div>
+        <div class="reel" id="r1c2">🍋</div>
+        <div class="reel" id="r1c3">🍊</div>
+        <div class="reel" id="r1c4">🍉</div>
+        <div class="reel" id="r1c5">⭐</div>
+      </div>
+      <div class="reel-row">
+        <div class="reel" id="r2c1">🍒</div>
+        <div class="reel" id="r2c2">🍋</div>
+        <div class="reel" id="r2c3">🍊</div>
+        <div class="reel" id="r2c4">🍉</div>
+        <div class="reel" id="r2c5">⭐</div>
+      </div>
+      <div class="reel-row">
+        <div class="reel" id="r3c1">🍒</div>
+        <div class="reel" id="r3c2">🍋</div>
+        <div class="reel" id="r3c3">🍊</div>
+        <div class="reel" id="r3c4">🍉</div>
+        <div class="reel" id="r3c5">⭐</div>
+      </div>
+    </div>
+    <button class="spin-btn">🎯 SPIN</button>
+    <div class="result"></div>
+  </div>
 
-        // Inicijalizacija: Napravi dugačku traku simbola za svaki reel
-        function initGame() {
-            for (let i = 0; i < 5; i++) {
-                const strip = document.getElementById(`reel-${i}`);
-                populateStrip(strip);
-            }
-        }
+  <button id="watch-ad">🎁 Watch Ad for Credits</button>
+</div>
 
-        function populateStrip(strip) {
-            strip.innerHTML = '';
-            // Generišemo 30 simbola po traci da bi se vrtelo glatko
-            for (let i = 0; i < 30; i++) {
-                const div = document.createElement('div');
-                div.className = 'symbol';
-                div.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-                strip.appendChild(div);
-            }
-        }
+<!-- Pop-up overlay -->
+<div id="popup-overlay" class="hidden">
+  <div class="popup">
+    <h2 id="popup-title">🎉 Big Win! 🎉</h2>
+    <p id="popup-message">You won 100 coins!</p>
+    <button id="popup-continue">Continue</button>
+  </div>
+</div>
 
-        async function startSpin() {
-            if (isSpinning) return;
-            if (freeSpins <= 0 && credits < 10) {
-                alert("Out of credits! Watch an ad.");
-                return;
-            }
+<!-- Coins explosion container -->
+<div id="coins-container"></div>
 
-            isSpinning = true;
-            document.getElementById('spin-btn').disabled = true;
-
-            if (freeSpins > 0) {
-                freeSpins--;
-                document.getElementById('status-text').innerText = "FREE SPIN MODE";
-            } else {
-                credits -= 10;
-                document.getElementById('status-text').innerText = "Diamond Slot";
-            }
-            
-            updateUI();
-
-            const spinPromises = [];
-            const finalResults = [];
-
-            for (let i = 0; i < 5; i++) {
-                const strip = document.getElementById(`reel-${i}`);
-                // Nasumično biramo gde će se zaustaviti (između 0 i 27)
-                const stopAt = Math.floor(Math.random() * 25);
-                const travel = stopAt * SYMBOL_HEIGHT;
-                
-                // Animacija odozgo na dole
-                strip.style.transition = `top ${2 + i * 0.4}s cubic-bezier(0.4, 0, 0.2, 1)`;
-                strip.style.top = `-${travel}px`;
-
-                // Čuvamo simbole koji su stali u vidno polje (gornja 3)
-                const visibleSymbols = [];
-                // Logički hvatamo simbole nakon što se animacija završi
-                spinPromises.push(new Promise(res => setTimeout(res, 2000 + i * 400)));
-            }
-
-            await Promise.all(spinPromises);
-            
-            checkResults();
-            resetStrips();
-            isSpinning = false;
-            document.getElementById('spin-btn').disabled = false;
-        }
-
-        function checkResults() {
-            // Simulacija provere (u pravom slotu bismo čitali DOM elemente na stop poziciji)
-            const isWin = Math.random() > 0.8;
-            const isFreeSpinTrigger = Math.random() > 0.92;
-
-            if (isFreeSpinTrigger) {
-                freeSpins += 10;
-                document.getElementById('status-text').innerText = "10 FREE SPINS WON! 💎";
-                document.getElementById('spin-btn').classList.add('free-mode');
-            } else if (isWin) {
-                const winAmt = 50 + Math.floor(Math.random() * 200);
-                credits += winAmt;
-                document.getElementById('status-text').innerText = `WIN: +${winAmt}`;
-            }
-
-            if (freeSpins === 0 && !isFreeSpinTrigger) {
-                document.getElementById('spin-btn').classList.remove('free-mode');
-            }
-            updateUI();
-        }
-
-        function resetStrips() {
-            // Vratimo stripove tiho na vrh i promešamo
-            for (let i = 0; i < 5; i++) {
-                const strip = document.getElementById(`reel-${i}`);
-                strip.style.transition = 'none';
-                strip.style.top = '-2700px';
-                populateStrip(strip);
-            }
-        }
-
-        function updateUI() {
-            document.getElementById('balance').innerText = credits;
-            document.getElementById('fs-count').innerText = freeSpins;
-        }
-
-        function showAd() {
-            const modal = document.getElementById('ad-modal');
-            const timer = document.getElementById('ad-timer');
-            modal.style.display = 'flex';
-            let count = 5;
-            const inter = setInterval(() => {
-                count--;
-                timer.innerText = count;
-                if (count <= 0) {
-                    clearInterval(inter);
-                    modal.style.display = 'none';
-                    credits += 100;
-                    updateUI();
-                    timer.innerText = "5";
-                }
-            }, 1000);
-        }
-
-        initGame();
-    </script>
+<script src="script.js"></script>
 </body>
 </html>
