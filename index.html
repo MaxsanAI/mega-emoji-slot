@@ -3,245 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mega EMOJI Slot</title>
+    <title>Mega EMOJI Slot Pro</title>
     <style>
         :root {
-            --bg: #0a0a0a;
+            --bg: #050505;
             --gold: #ffcf40;
-            --win-color: #00ff88;
+            --accent: #ff4d4d;
             --fs-color: #00d4ff;
-            --glass: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial Black', sans-serif; }
 
         body {
             background: var(--bg);
-            background-image: radial-gradient(circle, #1a1a2e 0%, #0a0a0a 100%);
+            background-image: radial-gradient(circle at center, #1a1a2e 0%, #050505 100%);
             color: white;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        #game-container {
-            width: 100%;
-            max-width: 900px;
-            text-align: center;
-            position: relative;
+        #main-layout {
+            display: flex;
+            gap: 20px;
+            width: 95%;
+            max-width: 1200px;
+            align-items: flex-start;
         }
 
-        h1 {
-            font-size: 3rem;
-            color: var(--gold);
-            text-shadow: 0 0 20px rgba(255, 207, 64, 0.5);
+        #game-container { flex: 3; text-align: center; }
+
+        /* LEADERBOARD */
+        #leaderboard {
+            flex: 1;
+            background: var(--glass);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: block;
+        }
+
+        .leader-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        /* JACKPOT */
+        .jackpot-bar {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid var(--accent);
+            padding: 10px;
+            border-radius: 50px;
             margin-bottom: 20px;
-            letter-spacing: -2px;
+            color: var(--accent);
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.3);
         }
 
-        /* SLOT MACHINE */
+        /* SLOT 5x4 */
         .slot-body {
             background: #111;
-            border: 8px solid #333;
+            border: 12px solid #222;
             border-radius: 25px;
             padding: 15px;
             display: flex;
             gap: 10px;
             justify-content: center;
-            box-shadow: 0 0 100px rgba(0,0,0,1);
-            position: relative;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
         }
 
-        .reel-container {
-            width: 120px;
-            height: 300px;
+        .reel-window {
+            width: 110px;
+            height: 320px; /* 4 reda po 80px */
             background: #fff;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
             position: relative;
         }
 
         .reel-strip {
             position: absolute;
-            top: 0;
+            top: -4000px; /* Početna pozicija visoko iznad */
             width: 100%;
             display: flex;
             flex-direction: column;
         }
 
         .symbol {
-            height: 100px;
-            font-size: 60px;
+            height: 80px;
+            font-size: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 1px solid #eee;
+            background: #fff;
             color: #000;
         }
 
-        /* UI CONTROLS */
+        /* DASHBOARD */
         .dashboard {
-            margin-top: 30px;
+            margin-top: 25px;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             background: var(--glass);
             padding: 20px;
             border-radius: 20px;
-            backdrop-filter: blur(10px);
         }
 
-        .stat { display: flex; flex-direction: column; }
-        .stat-label { font-size: 10px; color: var(--gold); text-transform: uppercase; }
-        .stat-val { font-size: 24px; }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
+        .label { font-size: 10px; color: #aaa; text-transform: uppercase; }
+        .val { font-size: 22px; color: #fff; }
+
+        /* BET CONTROLS */
+        .bet-ctrl {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 15px;
+            border-radius: 10px;
+        }
+        .bet-btn {
+            background: var(--gold);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
         .spin-btn {
             grid-column: span 4;
             padding: 20px;
-            font-size: 2rem;
-            background: linear-gradient(to bottom, #ffcf40, #ffab00);
+            font-size: 2.2rem;
+            background: linear-gradient(#ffcf40, #ffab00);
             border: none;
             border-radius: 15px;
             cursor: pointer;
-            color: #000;
-            box-shadow: 0 8px 0 #b37700;
+            box-shadow: 0 8px 0 #996600;
         }
 
-        .spin-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #b37700; }
-        .spin-btn:disabled { filter: grayscale(1); opacity: 0.5; }
+        .spin-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #996600; }
+        .spin-btn:disabled { opacity: 0.4; filter: grayscale(1); }
 
-        /* OVERLAYS */
+        /* POPUP */
         .overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             z-index: 1000;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
         }
 
-        .big-win-text {
-            font-size: 6rem;
-            color: var(--gold);
-            text-shadow: 0 0 50px gold;
-            animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .win-title { font-size: 5rem; color: var(--gold); text-shadow: 0 0 30px gold; animation: zoom 0.5s; }
+        @keyframes zoom { from { scale: 0; } to { scale: 1; } }
 
-        .fs-popup {
-            background: #1a1a2e;
-            padding: 40px;
-            border-radius: 30px;
-            border: 4px solid var(--fs-color);
-            animation: zoomIn 0.4s;
-        }
-
-        .continue-btn {
-            margin-top: 20px;
-            padding: 15px 40px;
-            font-size: 1.5rem;
-            background: var(--fs-color);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        @keyframes zoomIn {
-            from { transform: scale(0); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .shake { animation: shake 0.5s; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        @media (max-width: 600px) {
-            .reel-container { width: 60px; height: 180px; }
+        @media (max-width: 900px) {
+            #main-layout { flex-direction: column; align-items: center; }
+            #leaderboard { width: 100%; order: 2; }
+            .reel-window { width: 60px; height: 240px; }
             .symbol { height: 60px; font-size: 30px; }
-            h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <h1>Mega EMOJI Slot</h1>
-        
-        <div class="slot-body" id="slot-body">
-            <div class="reel-container"><div class="reel-strip" id="reel-0"></div></div>
-            <div class="reel-container"><div class="reel-strip" id="reel-1"></div></div>
-            <div class="reel-container"><div class="reel-strip" id="reel-2"></div></div>
-            <div class="reel-container"><div class="reel-strip" id="reel-3"></div></div>
-            <div class="reel-container"><div class="reel-strip" id="reel-4"></div></div>
+    <div id="main-layout">
+        <div id="game-container">
+            <div class="jackpot-bar">JACKPOT: $<span id="jp">1,240,55</span></div>
+            
+            <div class="slot-body">
+                <div class="reel-window"><div class="reel-strip" id="reel-0"></div></div>
+                <div class="reel-window"><div class="reel-strip" id="reel-1"></div></div>
+                <div class="reel-window"><div class="reel-strip" id="reel-2"></div></div>
+                <div class="reel-window"><div class="reel-strip" id="reel-3"></div></div>
+                <div class="reel-window"><div class="reel-strip" id="reel-4"></div></div>
+            </div>
+
+            <div class="dashboard">
+                <div class="stat-box">
+                    <span class="label">Credits</span>
+                    <span class="val" id="balance">122</span>
+                </div>
+                
+                <div class="stat-box">
+                    <span class="label">Bet</span>
+                    <div class="bet-ctrl">
+                        <button class="bet-btn" onclick="changeBet(-5)">-</button>
+                        <span class="val" id="bet-val">10</span>
+                        <button class="bet-btn" onclick="changeBet(5)">+</button>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <span class="label">Win</span>
+                    <span class="val" id="win-display" style="color:var(--gold)">0</span>
+                </div>
+
+                <div class="stat-box">
+                    <span class="label">Free Spins</span>
+                    <span class="val" id="fs-display" style="color:var(--fs-color)">0</span>
+                </div>
+
+                <button class="spin-btn" id="spin-btn" onclick="spin()">SPIN</button>
+            </div>
+            <p onclick="addCreditsAd()" style="margin-top:20px; color:#555; cursor:pointer">WATCH AD FOR +100</p>
         </div>
 
-        <div class="dashboard">
-            <div class="stat"><span class="stat-label">Credits</span><span class="stat-val" id="credits">122</span></div>
-            <div class="stat"><span class="stat-label">Bet</span><span class="stat-val">10</span></div>
-            <div class="stat"><span class="stat-label">Win</span><span class="stat-val" id="last-win">0</span></div>
-            <div class="stat"><span class="stat-label">FreeSpins</span><span class="stat-val" id="fs-display" style="color:var(--fs-color)">0</span></div>
-            <button class="spin-btn" id="spin-btn" onclick="spin()">SPIN</button>
+        <div id="leaderboard">
+            <h3 style="color:var(--gold); margin-bottom:15px">TOP PLAYERS</h3>
+            <div class="leader-item"><span>1. EMOJI_KING</span><span>$14,500</span></div>
+            <div class="leader-item"><span>2. LuckySrb</span><span>$8,220</span></div>
+            <div class="leader-item"><span>3. SlotMaster</span><span>$5,100</span></div>
+            <div class="leader-item"><span>4. BigWinner</span><span>$3,900</span></div>
+            <div class="leader-item"><span>5. Player99</span><span>$1,200</span></div>
         </div>
-
-        <p onclick="addCreditsAd()" style="margin-top:15px; opacity:0.5; cursor:pointer;">WATCH AD FOR +100</p>
     </div>
 
-    <div id="big-win-overlay" class="overlay">
-        <div class="big-win-text">BIG WIN!</div>
-        <div id="win-amount" style="font-size: 4rem;">+250</div>
-    </div>
-
-    <div id="fs-overlay" class="overlay">
-        <div class="fs-popup">
-            <h2 style="font-size:3rem; color:var(--fs-color)">LUCKY!</h2>
-            <p style="font-size:1.5rem">You won 10 FREE SPINS</p>
-            <button class="continue-btn" onclick="closeFS()">CONTINUE</button>
-        </div>
+    <div id="overlay" class="overlay">
+        <h1 class="win-title" id="ov-title">BIG WIN!</h1>
+        <h2 id="ov-sub" style="font-size:3rem"></h2>
+        <button class="spin-btn" style="grid-column:auto; padding:10px 40px; margin-top:30px;" onclick="closeOv()">CONTINUE</button>
     </div>
 
     <script>
-        const emoji = ['💎', '😎', '🔥', '🤑', '⭐', '7️⃣', '🍀', '🚀'];
+        const emoji = ['🍒', '🍋', '🍇', '🍉', '🔔', '⭐', '7️⃣', '💎'];
         let credits = 122;
+        let bet = 10;
         let freeSpins = 0;
         let isSpinning = false;
-
-        // Audio System (Web Audio API - No files needed)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(freq, type, duration, vol=0.1) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        }
+        let jpVal = 1240.55;
 
         function init() {
             for(let i=0; i<5; i++) {
                 const strip = document.getElementById(`reel-${i}`);
-                for(let j=0; j<40; j++) {
-                    const div = document.createElement('div');
-                    div.className = 'symbol';
-                    div.innerText = emoji[Math.floor(Math.random()*emoji.length)];
-                    strip.appendChild(div);
-                }
+                populate(strip);
             }
+            setInterval(() => {
+                jpVal += 0.03;
+                document.getElementById('jp').innerText = jpVal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }, 150);
+        }
+
+        function populate(strip) {
+            strip.innerHTML = '';
+            for(let i=0; i<60; i++) {
+                const div = document.createElement('div');
+                div.className = 'symbol';
+                div.innerText = emoji[Math.floor(Math.random()*emoji.length)];
+                strip.appendChild(div);
+            }
+        }
+
+        function changeBet(val) {
+            if(isSpinning) return;
+            bet += val;
+            if(bet < 5) bet = 5;
+            if(bet > 20) bet = 20;
+            document.getElementById('bet-val').innerText = bet;
         }
 
         async function spin() {
             if(isSpinning) return;
-            if(credits < 10 && freeSpins <= 0) return alert("No Credits!");
+            if(credits < bet && freeSpins <= 0) return alert("Out of credits!");
 
             isSpinning = true;
             document.getElementById('spin-btn').disabled = true;
@@ -249,89 +283,67 @@
             if(freeSpins > 0) {
                 freeSpins--;
             } else {
-                credits -= 10;
+                credits -= bet;
             }
             updateUI();
 
-            for(let i=0; i<5; i++) {
-                const strip = document.getElementById(`reel-${i}`);
-                const stopPos = Math.floor(Math.random() * 30) + 5;
-                strip.style.transition = `top ${2 + i*0.3}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
-                strip.style.top = `-${stopPos * 100}px`;
-                
-                setTimeout(() => playSound(150 - (i*20), 'square', 0.1), i * 300);
-            }
-
-            setTimeout(() => finalizeSpin(), 3500);
-        }
-
-        function finalizeSpin() {
-            isSpinning = false;
-            document.getElementById('spin-btn').disabled = false;
-            
-            // Logika dobitka
-            const winChance = Math.random();
-            if(winChance > 0.7) {
-                const winAmt = Math.floor(Math.random() * 200) + 20;
-                credits += winAmt;
-                document.getElementById('last-win').innerText = winAmt;
-                
-                if(winAmt > 50) {
-                    triggerBigWin(winAmt);
-                } else {
-                    playSound(600, 'sine', 0.3);
-                }
-            }
-
-            // 20% šanse za Free Spins
-            if(Math.random() < 0.20) {
-                triggerFreeSpins();
-            }
-
-            // Reset strips positions for next spin
             for(let i=0; i<5; i++) {
                 const strip = document.getElementById(`reel-${i}`);
                 strip.style.transition = 'none';
-                strip.style.top = '0px';
+                strip.style.top = '-4000px'; // Skoči na vrh
+                
+                // Force layout
+                strip.offsetHeight;
+
+                // Padaj odozgo na dole do nule
+                strip.style.transition = `top ${2.5 + i*0.4}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
+                strip.style.top = '0px'; 
+            }
+
+            setTimeout(checkWin, 4200);
+        }
+
+        function checkWin() {
+            isSpinning = false;
+            document.getElementById('spin-btn').disabled = false;
+
+            const winRoll = Math.random();
+            const fsRoll = Math.random();
+
+            // OTEŽANA MATEMATIKA
+            if(fsRoll < 0.03) { // 3% šanse za Free Spins
+                freeSpins += 10;
+                showOverlay("FREE SPINS", "10 Rounds Awarded!");
+            } else if(winRoll < 0.12) { // 12% šanse za dobitak
+                const multiplier = Math.floor(Math.random() * 10) + 2;
+                const winAmt = bet * multiplier;
+                credits += winAmt;
+                document.getElementById('win-display').innerText = winAmt;
+                
+                if(multiplier >= 8) {
+                    showOverlay("ULTRA WIN!", "+$" + winAmt);
+                }
             }
             updateUI();
         }
 
-        function triggerBigWin(amt) {
-            const overlay = document.getElementById('big-win-overlay');
-            document.getElementById('win-amount').innerText = "+" + amt;
-            overlay.style.display = 'flex';
-            document.getElementById('slot-body').classList.add('shake');
-            
-            // Boom Sound
-            playSound(100, 'sawtooth', 1, 0.3);
-            setTimeout(() => playSound(50, 'sawtooth', 1.5, 0.5), 200);
-
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                document.getElementById('slot-body').classList.remove('shake');
-            }, 3000);
+        function showOverlay(t, s) {
+            document.getElementById('ov-title').innerText = t;
+            document.getElementById('ov-sub').innerText = s;
+            document.getElementById('overlay').style.display = 'flex';
         }
 
-        function triggerFreeSpins() {
-            document.getElementById('fs-overlay').style.display = 'flex';
-            playSound(800, 'sine', 0.5);
-            setTimeout(() => playSound(1000, 'sine', 0.5), 200);
-        }
-
-        function closeFS() {
-            freeSpins += 10;
-            document.getElementById('fs-overlay').style.display = 'none';
-            updateUI();
+        function closeOv() {
+            document.getElementById('overlay').style.display = 'none';
         }
 
         function updateUI() {
-            document.getElementById('credits').innerText = credits;
+            document.getElementById('balance').innerText = credits;
             document.getElementById('fs-display').innerText = freeSpins;
         }
 
         function addCreditsAd() {
-            alert("Simulating Ad... +100 Credits");
+            alert("Reward: +100 Credits");
             credits += 100;
             updateUI();
         }
