@@ -6,7 +6,7 @@
     <title>Mega EMOJI Slot</title>
     <style>
         :root {
-            --bg: #0a0a0a;
+            --bg: #050505;
             --gold: #ffcf40;
             --fs-blue: #00d4ff;
             --reel-w: 100px;
@@ -14,56 +14,24 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial Black', sans-serif; }
+        body { background: var(--bg); background: radial-gradient(circle, #1a1a2e 0%, #050505 100%); height: 100vh; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; }
 
-        body {
-            background: var(--bg);
-            background: radial-gradient(circle, #1a1a2e 0%, #050505 100%);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            overflow: hidden;
-        }
-
-        /* SLOT CONTAINER */
-        .machine-wrap {
-            position: relative;
-            padding: 15px;
-            background: #222;
-            border: 10px solid #333;
-            border-radius: 25px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8);
-        }
-
-        .slot-body {
-            display: flex;
-            gap: 5px;
-            background: #000;
-            padding: 5px;
-            border-radius: 10px;
-        }
-
+        .machine-wrap { padding: 15px; background: #222; border: 8px solid #333; border-radius: 20px; box-shadow: 0 0 50px #000; }
+        .slot-body { display: flex; gap: 5px; background: #000; padding: 5px; border-radius: 10px; }
+        
         .reel-window {
             width: var(--reel-w);
-            height: calc(var(--sym-h) * 4); /* 5x4 grid */
+            height: calc(var(--sym-h) * 4);
             background: white;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
             border-radius: 5px;
         }
 
-        .reel-strip {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
+        /* Simboli su sada apsolutno pozicionirani */
         .symbol {
+            position: absolute;
+            width: 100%;
             height: var(--sym-h);
             display: flex;
             align-items: center;
@@ -72,101 +40,52 @@
             color: #000;
             background: #fff;
             border-bottom: 1px solid #eee;
+            will-change: transform;
         }
 
-        /* WIN ANIMATION */
-        .win-active {
-            animation: winBlink 0.4s infinite alternate;
-            background: #fff6d5 !important;
-            z-index: 10;
-        }
+        .win-active { animation: winBlink 0.3s infinite alternate; background: #fff6d5 !important; z-index: 10; border: 2px solid gold; }
+        @keyframes winBlink { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        @keyframes winBlink {
-            from { transform: scale(1); box-shadow: inset 0 0 0px gold; }
-            to { transform: scale(1.05); box-shadow: inset 0 0 20px gold; }
-        }
-
-        /* CONTROLS */
-        .ui {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 15px;
-        }
-
+        .ui { width: 100%; max-width: 600px; margin-top: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; }
         .stat { text-align: center; }
         .label { font-size: 10px; color: #888; text-transform: uppercase; display: block; }
         .val { font-size: 20px; color: var(--gold); }
 
-        .spin-btn {
-            grid-column: span 4;
-            padding: 15px;
-            font-size: 1.8rem;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(#ffcf40, #ffab00);
-            cursor: pointer;
-            box-shadow: 0 6px 0 #946b00;
-            color: #000;
-        }
-
+        .spin-btn { grid-column: span 4; padding: 15px; font-size: 1.8rem; border: none; border-radius: 12px; background: linear-gradient(#ffcf40, #ffab00); cursor: pointer; box-shadow: 0 6px 0 #946b00; color: #000; }
         .spin-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #946b00; }
-        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        .spin-btn:disabled { opacity: 0.5; filter: grayscale(1); }
 
-        /* OVERLAYS */
-        .popup {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 100;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .boom-text { font-size: 4rem; color: var(--gold); text-shadow: 0 0 20px gold; }
-
-        @media (max-width: 600px) {
-            :root { --reel-w: 65px; --sym-h: 60px; }
-            .boom-text { font-size: 2.5rem; }
-        }
+        .popup { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
+        
+        @media (max-width: 600px) { :root { --reel-w: 65px; --sym-h: 60px; } }
     </style>
 </head>
 <body>
 
     <div class="machine-wrap" id="machine">
         <div class="slot-body">
-            <div class="reel-window"><div class="reel-strip" id="reel-0"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel-1"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel-2"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel-3"></div></div>
-            <div class="reel-window"><div class="reel-strip" id="reel-4"></div></div>
+            <div class="reel-window" id="window-0"></div>
+            <div class="reel-window" id="window-1"></div>
+            <div class="reel-window" id="window-2"></div>
+            <div class="reel-window" id="window-3"></div>
+            <div class="reel-window" id="window-4"></div>
         </div>
     </div>
 
     <div class="ui">
         <div class="stat"><span class="label">Credits</span><span class="val" id="credits">122</span></div>
-        <div class="stat">
-            <span class="label">Bet</span>
+        <div class="stat"><span class="label">Bet</span>
             <div style="display:flex; justify-content:center; align-items:center; gap:5px;">
-                <button onclick="changeBet(-5)" style="width:20px">-</button>
-                <span class="val" id="bet-display">10</span>
-                <button onclick="changeBet(5)" style="width:20px">+</button>
+                <button onclick="changeBet(-5)">-</button><span class="val" id="bet-display">10</span><button onclick="changeBet(5)">+</button>
             </div>
         </div>
         <div class="stat"><span class="label">Win</span><span class="val" id="win-display">0</span></div>
         <div class="stat"><span class="label">FreeSpins</span><span class="val" id="fs-display" style="color:var(--fs-blue)">0</span></div>
-        <button class="spin-btn" id="spin-btn" onclick="spin()">SPIN</button>
+        <button class="spin-btn" id="spin-btn" onclick="startSpin()">SPIN</button>
     </div>
 
     <div id="popup" class="popup">
-        <h1 class="boom-text" id="pop-title">BIG WIN!</h1>
+        <h1 style="font-size:4rem; color:var(--gold)" id="pop-title">BIG WIN!</h1>
         <h2 id="pop-sub" style="font-size:2rem; margin:20px 0;"></h2>
         <button class="spin-btn" style="padding:10px 40px;" onclick="closePop()">CONTINUE</button>
     </div>
@@ -177,36 +96,37 @@
     let bet = 10;
     let freeSpins = 0;
     let isSpinning = false;
-    
-    // Audio Context
+    let reels = [];
+
+    // --- AUDIO ENGINE ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSfx(freq, type, dur) {
+    function playSfx(freq, type, dur, vol=0.1) {
         const o = audioCtx.createOscillator();
         const g = audioCtx.createGain();
-        o.type = type; o.frequency.value = freq;
-        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        o.type = type; o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        g.gain.setValueAtTime(vol, audioCtx.currentTime);
         g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
         o.connect(g); g.connect(audioCtx.destination);
         o.start(); o.stop(audioCtx.currentTime + dur);
     }
 
-    // Inicijalizacija - popunjavamo trake unapred
     function init() {
+        const symH = window.innerWidth > 600 ? 80 : 60;
         for(let i=0; i<5; i++) {
-            const strip = document.getElementById(`reel-${i}`);
-            // Dodajemo 30 početnih simbola
-            for(let j=0; j<30; j++) {
-                createSymbol(strip);
+            const windowEl = document.getElementById(`window-${i}`);
+            let symbolsInReel = [];
+            // Kreiramo 6 simbola (4 vidljiva + 2 za "buffer" tokom rotacije)
+            for(let j=0; j<6; j++) {
+                const el = document.createElement('div');
+                el.className = 'symbol';
+                el.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+                let y = (j - 1) * symH; // Počinje jedan iznad vrha
+                el.style.transform = `translateY(${y}px)`;
+                windowEl.appendChild(el);
+                symbolsInReel.push({ el, y });
             }
+            reels.push(symbolsInReel);
         }
-    }
-
-    function createSymbol(strip) {
-        const div = document.createElement('div');
-        div.className = 'symbol';
-        div.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
-        strip.appendChild(div);
-        return div;
     }
 
     function changeBet(val) {
@@ -215,96 +135,104 @@
         document.getElementById('bet-display').innerText = bet;
     }
 
-    async function spin() {
+    function startSpin() {
         if(isSpinning || (credits < bet && freeSpins === 0)) return;
-        
         isSpinning = true;
         document.getElementById('spin-btn').disabled = true;
         document.querySelectorAll('.symbol').forEach(s => s.classList.remove('win-active'));
-
         if(freeSpins > 0) freeSpins--; else credits -= bet;
         updateUI();
 
-        const spinResults = [];
+        const symH = window.innerWidth > 600 ? 80 : 60;
+        let spinSpeed = 25;
+        let startTime = Date.now();
+        
+        function animate() {
+            let now = Date.now();
+            reels.forEach((reel, i) => {
+                // Svaki reel staje u različito vreme
+                let stopTime = 2000 + (i * 600);
+                let elapsed = now - startTime;
 
-        for(let i=0; i<5; i++) {
-            const strip = document.getElementById(`reel-${i}`);
-            const symH = window.innerWidth > 600 ? 80 : 60;
-            
-            // Koliko simbola preskačemo (brzina rotacije)
-            const jump = 20 + (i * 5);
-            const targetY = jump * symH;
+                if (elapsed < stopTime) {
+                    // Zvuk kuckanja (samo za prvi reel da ne probije uši)
+                    if(i === 0 && Math.random() > 0.9) playSfx(150, 'sine', 0.05, 0.02);
+                    
+                    reel.forEach(sym => {
+                        sym.y += spinSpeed;
+                        if (sym.y >= symH * 4) {
+                            sym.y -= symH * 6;
+                            sym.el.innerText = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+                        }
+                        sym.el.style.transform = `translateY(${sym.y}px)`;
+                    });
+                } else if (!reel.stopped) {
+                    // Poravnanje na kraju
+                    reel.forEach(sym => {
+                        sym.y = Math.round(sym.y / symH) * symH;
+                        sym.el.style.transform = `translateY(${sym.y}px)`;
+                    });
+                    reel.stopped = true;
+                    playSfx(400 - (i*50), 'triangle', 0.2, 0.05); // Ding pri stajanju
+                }
+            });
 
-            // Dodajemo nove simbole na kraj trake za ovaj spin
-            for(let j=0; j<jump; j++) createSymbol(strip);
-
-            // Animacija pokreta odozgo na dole (pomeramo top u minus)
-            strip.style.transition = `transform ${2 + i * 0.4}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
-            strip.style.transform = `translateY(-${targetY}px)`;
-            
-            // Skladištimo rezultat (zadnja 4 simbola koji su ušli u vidno polje)
-            const children = Array.from(strip.children);
-            spinResults.push(children.slice(-4));
+            if (reels.every(r => r.stopped)) {
+                finalize();
+            } else {
+                requestAnimationFrame(animate);
+            }
         }
-
-        setTimeout(() => finalize(spinResults), 4000);
+        
+        reels.forEach(r => r.stopped = false);
+        requestAnimationFrame(animate);
     }
 
-    function finalize(results) {
-        // Resetujemo trake (fizički ih vraćamo na 0 bez animacije i brišemo stare simbole)
-        // Ovo omogućava beskonačno vrtenje nadole
-        for(let i=0; i<5; i++) {
-            const strip = document.getElementById(`reel-${i}`);
-            const last4 = results[i].map(el => el.innerText);
-            
-            strip.style.transition = 'none';
-            strip.style.transform = 'translateY(0)';
-            strip.innerHTML = '';
-            
-            // Vraćamo zadnja 4 simbola na vrh + 26 novih za sledeći krug
-            last4.forEach(txt => {
-                const d = document.createElement('div');
-                d.className = 'symbol';
-                d.innerText = txt;
-                strip.appendChild(d);
-            });
-            for(let j=0; j<26; j++) createSymbol(strip);
-        }
+    function finalize() {
+        const symH = window.innerWidth > 600 ? 80 : 60;
+        let matrix = [];
 
-        // --- PROVERA DOBITKA ---
-        let totalWin = 0;
-        let starCount = 0;
+        // Hvatamo koji su simboli u vidnom polju (y od 0 do 320)
+        reels.forEach((reel, i) => {
+            let visibleInCol = [];
+            for(let row=0; row<4; row++) {
+                let targetY = row * symH;
+                let found = reel.find(s => Math.abs(s.y - targetY) < 5);
+                visibleInCol.push(found);
+            }
+            matrix.push(visibleInCol);
+        });
 
-        // Provera horizontalnih linija (4 reda)
+        let win = 0;
+        let stars = 0;
+
+        // Provera linija (4 reda)
         for(let r=0; r<4; r++) {
-            const matchSym = results[0][r].innerText;
-            let matches = 1;
-            let winEls = [results[0][r]];
-
+            let match = matrix[0][r].el.innerText;
+            let count = 1;
+            let winEls = [matrix[0][r].el];
             for(let c=1; c<5; c++) {
-                if(results[c][r].innerText === matchSym) {
-                    matches++;
-                    winEls.push(results[c][r]);
+                if(matrix[c][r].el.innerText === match) {
+                    count++;
+                    winEls.push(matrix[c][r].el);
                 } else break;
             }
-
-            if(matches >= 3) {
-                totalWin += bet * matches;
-                winEls.forEach(el => el.classList.add('win-active'));
-                playSfx(500 + (r * 100), 'sine', 0.5);
+            if(count >= 3) {
+                win += bet * count;
+                winEls.forEach(e => e.classList.add('win-active'));
             }
         }
 
-        // Provera za Free Spins (Zvezdice bilo gde)
-        results.forEach(col => col.forEach(s => { if(s.innerText === '⭐') starCount++; }));
+        // Brojanje zvezda za FS
+        matrix.forEach(col => col.forEach(s => { if(s.el.innerText === '⭐') stars++; }));
 
-        if(starCount >= 4) {
+        if(stars >= 4) {
             freeSpins += 10;
-            showPop("LUCKY STARS!", "10 FREE SPINS AWARDED");
-        } else if(totalWin > 0) {
-            credits += totalWin;
-            document.getElementById('win-display').innerText = totalWin;
-            if(totalWin >= bet * 5) showPop("BIG WIN!", "+$" + totalWin);
+            showPop("LUCKY STARS!", "10 FREE SPINS");
+        } else if(win > 0) {
+            credits += win;
+            document.getElementById('win-display').innerText = win;
+            if(win >= bet * 5) showPop("BIG WIN!", "+$" + win);
         }
 
         isSpinning = false;
@@ -316,13 +244,12 @@
         document.getElementById('pop-title').innerText = t;
         document.getElementById('pop-sub').innerText = s;
         document.getElementById('popup').style.display = 'flex';
-        document.getElementById('machine').style.animation = 'shake 0.3s 3';
-        playSfx(100, 'sawtooth', 1);
+        playSfx(100, 'sawtooth', 0.8, 0.2);
     }
 
     function closePop() { document.getElementById('popup').style.display = 'none'; }
     function updateUI() {
-        document.getElementById('credits').innerText = credits;
+        document.getElementById('balance').innerText = credits;
         document.getElementById('fs-display').innerText = freeSpins;
     }
 
