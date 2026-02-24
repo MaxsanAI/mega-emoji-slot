@@ -3,27 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎰 Mega Emoji Slot Mobile 🎰</title>
+<title>🎰 Mega Emoji Slot 🎰</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="casino-container">
   <h1>🎰 Mega Emoji Slot 5x3 🎰</h1>
+
   <div class="info-bar">
     <div>Credits: <span id="credit-count">1000</span></div>
-    <div>Bet: <span id="bet-value">1</span> 
+    <div>
+      Bet: <span id="bet-value">1</span>
       <button id="bet-minus">-</button>
       <button id="bet-plus">+</button>
+    </div>
+    <div>
+      Lines: <span id="lines-value">1</span>
+      <button id="lines-minus">-</button>
+      <button id="lines-plus">+</button>
     </div>
   </div>
 
   <div class="slot-container" id="mega-slot">
     <div class="reels">
-      <div class="reel"></div>
-      <div class="reel"></div>
-      <div class="reel"></div>
-      <div class="reel"></div>
-      <div class="reel"></div>
+      <div class="reel" id="reel1">🍒</div>
+      <div class="reel" id="reel2">🍋</div>
+      <div class="reel" id="reel3">🍊</div>
+      <div class="reel" id="reel4">🍉</div>
+      <div class="reel" id="reel5">⭐</div>
     </div>
     <div class="paylines-overlay" id="paylines"></div>
     <button class="spin-btn">🎯 SPIN</button>
